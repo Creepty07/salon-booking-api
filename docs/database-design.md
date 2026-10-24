@@ -9,7 +9,7 @@
 ## services 
 - id (PK)
 - name
-- duration
+- duration_minutes
 - current_price
 
 ## stylist_services - UNIQUE(stylist_id, service_id)
