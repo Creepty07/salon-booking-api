@@ -27,7 +27,7 @@
 - client_id (FK)
 - stylist_id (FK)
 - service_id (FK)
-- start_at
+- starts_at
 - ends_at
 - price
 - status
