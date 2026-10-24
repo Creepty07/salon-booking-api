@@ -22,7 +22,7 @@
 - name
 - is_active
 
-## appointments - UNIQUE(stylist_id, date, start_time)
+## appointments - UNIQUE(stylist_id, starts_at)
 - id (PK)
 - client_id (FK)
 - stylist_id (FK)
