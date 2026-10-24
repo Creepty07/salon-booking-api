@@ -2,7 +2,8 @@ CREATE TABLE clients (
     id  INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name VARCHAR(100) NOT NULL CHECK(name <> ''),
     phone VARCHAR(20) UNIQUE NOT NULL,
-    email VARCHAR(50)
+    email VARCHAR(50),
+    CONSTRAINT client_phone_not_empty CHECK (phone <> '')
 );
 
 CREATE TABLE services (
