@@ -1,28 +1,28 @@
 # DATABASE BEAUTY SALON
 
-## CLIENTS
+## clients
 - id (PK)
 - name
 - phone (UNIQUE)
 - mail
 
-## SERVICES 
+## services 
 - id (PK)
 - name
 - duration
 - current_price
 
-## STYLIST_SERVICES
+## stylist_services - UNIQUE(stylist_id, service_id)
 - id (PK)
 - service_id (FK)
 - stylist_id (FK)
 
-## STYLISTS:
+## stylists:
 - id (PK)
 - name
 - is_active
 
-## APPOINTMENTS - UNIQUE(stylist_id, date, start_time)
+## appointments - UNIQUE(stylist_id, date, start_time)
 - id (PK)
 - client_id (FK)
 - stylist_id (FK)
@@ -33,7 +33,7 @@
 - status
 
 ## RELATIONS:
-- CLIENTS 1:N APPOINTMENTS
-- STYLISTS 1:N APPOINTMENTS
-- SERVICE 1:N APPOINTMENTS
-- SERVICES N:M STYLIST
+- CLIENTS 1:N APPOINTMENTS: A client can have many appointments; each appointment belongs to one client.
+- STYLISTS 1:N APPOINTMENTS: A stylist can have many appointments; each appointment belongs to one stylist.
+- SERVICES 1:N APPOINTMENTS: A service can appear in many appointments; each appointment is for one service.
+- SERVICES N:M STYLISTS: A stylist can perform many services, and each service can be performed by many stylists.
