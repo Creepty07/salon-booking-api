@@ -4,7 +4,7 @@
 - id (PK)
 - name
 - phone (UNIQUE)
-- mail
+- email
 
 ## services 
 - id (PK)
