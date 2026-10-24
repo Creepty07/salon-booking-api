@@ -36,8 +36,8 @@ CREATE TABLE appointments (
     ends_at TIMESTAMPTZ NOT NULL,
     price NUMERIC(7,2) NOT NULL,
     status VARCHAR(20) NOT NULL DEFAULT 'scheduled',
-    CONSTRAINT appointments_price_nonnegative CHECK (price >= 0),
-    CONSTRAINT appointments_status_check CHECK (status IN ('scheduled', 'cancelled', 'completed')),
-    CONSTRAINT appointments_stylist_start_unique UNIQUE(stylist_id, starts_at),
-    CONSTRAINT appointments_ends_after_starts CHECK (ends_at > starts_at)
+    CONSTRAINT appointment_price_nonnegative CHECK (price >= 0),
+    CONSTRAINT appointment_status_check CHECK (status IN ('scheduled', 'cancelled', 'completed')),
+    CONSTRAINT appointment_stylist_start_unique UNIQUE(stylist_id, starts_at),
+    CONSTRAINT appointment_ends_after_starts CHECK (ends_at > starts_at)
 );
