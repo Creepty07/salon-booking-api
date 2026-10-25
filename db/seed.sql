@@ -79,8 +79,8 @@ VALUES
 
 
 INSERT INTO stylist_services (
-    stylist_id,
-    service_id
+    service_id,
+    stylist_id
 )
 VALUES
     (
