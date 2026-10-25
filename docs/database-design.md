@@ -2,13 +2,13 @@
 
 ## clients
 - id (PK)
-- name
-- phone (UNIQUE)
+- name — CHECK (btrim(name) <> '')
+- phone (UNIQUE) — CHECK (btrim(phone) <> '')
 - email
 
 ## services
 - id (PK)
-- name
+- name — CHECK (btrim(name) <> '')
 - duration_minutes
 - current_price
 
@@ -19,7 +19,7 @@
 
 ## stylists
 - id (PK)
-- name
+- name — CHECK (btrim(name) <> '')
 - is_active
 
 ## appointments — UNIQUE(stylist_id, starts_at)
@@ -31,7 +31,7 @@
 - ends_at
 - price
 - status
-- FOREIGN KEY (stylist_id, service_id) REFERENCES stylist_services (stylist_id, service_id)
+- FOREIGN KEY (stylist_id, service_id) REFERENCES stylist_services (stylist_id, service_id) — composite FK
 
 ## RELATIONS
 - **CLIENTS 1:N APPOINTMENTS:** A client can have many appointments; each appointment belongs to one client.
