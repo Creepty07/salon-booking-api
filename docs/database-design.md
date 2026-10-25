@@ -2,27 +2,27 @@
 
 ## clients
 - id (PK)
-- name
-- phone (UNIQUE)
+- name — CHECK (btrim(name) <> '')
+- phone (UNIQUE) — CHECK (btrim(phone) <> '')
 - email
 
-## services 
+## services
 - id (PK)
-- name
+- name — CHECK (btrim(name) <> '')
 - duration_minutes
 - current_price
 
-## stylist_services - UNIQUE(stylist_id, service_id)
+## stylist_services — UNIQUE(service_id, stylist_id)
 - id (PK)
 - service_id (FK)
 - stylist_id (FK)
 
-## stylists:
+## stylists
 - id (PK)
-- name
+- name — CHECK (btrim(name) <> '')
 - is_active
 
-## appointments - UNIQUE(stylist_id, starts_at)
+## appointments — UNIQUE(stylist_id, starts_at)
 - id (PK)
 - client_id (FK)
 - stylist_id (FK)
@@ -31,9 +31,11 @@
 - ends_at
 - price
 - status
+- FOREIGN KEY (stylist_id, service_id) REFERENCES stylist_services (stylist_id, service_id) — composite FK
 
-## RELATIONS:
-- CLIENTS 1:N APPOINTMENTS: A client can have many appointments; each appointment belongs to one client.
-- STYLISTS 1:N APPOINTMENTS: A stylist can have many appointments; each appointment belongs to one stylist.
-- SERVICES 1:N APPOINTMENTS: A service can appear in many appointments; each appointment is for one service.
-- SERVICES N:M STYLISTS: A stylist can perform many services, and each service can be performed by many stylists.
+## RELATIONS
+- **CLIENTS 1:N APPOINTMENTS:** A client can have many appointments; each appointment belongs to one client.
+- **STYLISTS 1:N APPOINTMENTS:** A stylist can have many appointments; each appointment belongs to one stylist.
+- **SERVICES 1:N APPOINTMENTS:** A service can appear in many appointments; each appointment is for one service.
+- **SERVICES N:M STYLISTS:** A stylist can perform many services, and each service can be performed by many stylists. The `stylist_services` table implements this relationship.
+- **APPOINTMENTS → STYLIST_SERVICES:** Each appointment must use a stylist-service combination that exists in `stylist_services`.
