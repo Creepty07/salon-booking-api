@@ -40,5 +40,6 @@ CREATE TABLE appointments (
     CONSTRAINT appointment_price_nonnegative CHECK (price >= 0),
     CONSTRAINT appointment_status_check CHECK (status IN ('scheduled', 'cancelled', 'completed')),
     CONSTRAINT appointment_stylist_start_unique UNIQUE(stylist_id, starts_at),
-    CONSTRAINT appointment_ends_after_starts CHECK (ends_at > starts_at)
+    CONSTRAINT appointment_ends_after_starts CHECK (ends_at > starts_at),
+    CONSTRAINT appointment_stylist_service_fk FOREIGN KEY (stylist_id, service_id) REFERENCES stylist_services (stylist_id, service_id)
 );
