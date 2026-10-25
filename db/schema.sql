@@ -3,7 +3,7 @@ CREATE TABLE clients (
     name VARCHAR(100) NOT NULL CHECK(name <> ''),
     phone VARCHAR(20) UNIQUE NOT NULL,
     email VARCHAR(50),
-    CONSTRAINT client_phone_not_empty CHECK (phone <> '')
+    CONSTRAINT client_phone_not_empty CHECK (btrim(phone) <> '')
 );
 
 CREATE TABLE services (
