@@ -46,3 +46,6 @@ CREATE TABLE appointments (
     CONSTRAINT appointment_ends_after_starts CHECK (ends_at > starts_at),
     CONSTRAINT appointment_stylist_service_fk FOREIGN KEY (stylist_id, service_id) REFERENCES stylist_services (stylist_id, service_id)
 );
+
+CREATE INDEX appointment_client_id_idx
+ON appointments (client_id);
