@@ -1,5 +1,14 @@
 # DATABASE BEAUTY SALON
 
+### Appointment Client Index
+
+The `appointment_client_id_idx` index improves queries that search
+appointments by client. It also helps PostgreSQL check for related
+appointments when deleting a client.
+
+The index requires additional storage and adds some overhead to
+INSERT, UPDATE, and DELETE operations on appointments.
+
 ## clients
 - id (PK)
 - name — CHECK (btrim(name) <> '')
@@ -39,3 +48,5 @@
 - **SERVICES 1:N APPOINTMENTS:** A service can appear in many appointments; each appointment is for one service.
 - **SERVICES N:M STYLISTS:** A stylist can perform many services, and each service can be performed by many stylists. The `stylist_services` table implements this relationship.
 - **APPOINTMENTS → STYLIST_SERVICES:** Each appointment must use a stylist-service combination that exists in `stylist_services`.
+
+
