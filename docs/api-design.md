@@ -21,7 +21,9 @@ The API follows these conventions:
 | R4 | POST | `/appointments` | Create a new appointment. |
 | R5 | GET | `/appointments?client_id=…` | Get all appointments for a specific client. |
 | R6 | GET | `/appointments?from=YYYY-MM-DD[&to=YYYY-MM-DD]` | Get appointments within a date range. |
-| R7–R8 | PATCH | `/appointments/:id` | Update an existing appointment. |
+| R7 | PATCH | `/appointments/:id` | Cancel an appointment. |
+| R8 | PATCH | `/appointments/:id` | Mark an appointment as completed. |
+| R9 | PATCH | `/appointments/:id` | Edit an existing appointment. |
 
 ## 3. ENDPOINT DETAILS
 
@@ -130,12 +132,25 @@ The API follows these conventions:
   "status": "cancelled"
 }
 ```
+**Success response:** `200 OK`
+
+**Response body:** The complete updated appointment object, including all its fields.
+
+### R8. PATCH /appointments/:id (Complete appointment)
+
+**Request body:**
+
+```json
+{
+  "status": "completed"
+}
+```
 
 **Success response:** `200 OK`
 
 **Response body:** The complete updated appointment object, including all its fields.
 
-### R8. PATCH /appointments/:id (Edit appointment)
+### R9. PATCH /appointments/:id (Edit appointment)
 
 **Request body:** Only the following fields can be updated:
 
@@ -145,7 +160,7 @@ The API follows these conventions:
 
 **Success response:** `200 OK`
 
-**Response body:** The complete updated appointment object. If the service changes, the server recalculates `ends_at` and updates `price` using the new service information.
+**Response body:** The complete updated appointment object. The server recalculates `ends_at` and updates `price` if the service changes.
 
 ## 4. BUSINESS RULES
 
@@ -205,26 +220,31 @@ The receptionist cannot send or modify `ends_at` manually.
 
 If the service changes, the server recalculates `ends_at` using the new service duration.
 
-### 4.5 Appointment date filters
+### 4.5 Appointment filters
 
-The `client_id`, `from`, and `to` parameters are used to filter appointments.
+The API uses query parameters to filter appointments.
 
-The API supports two independent filters:
+The following parameters are supported:
 
-- `client_id` is used to get all appointments for a specific client.
-- `from` is used to filter appointments by date.
-- `to` is optional and can only be used with `from`.
+- `client_id`: Filters appointments by client.
+- `from`: Filters appointments starting from a specific date.
+- `to`: Optional. Defines the final date of the date range and can only be used with `from`.
 
-Rules:
+**Rules:**
 
-- R5 requires `client_id`.
-- R6 requires `from`.
+- At least one filter parameter must be provided. If no parameters are provided, the API returns `400 Bad Request`.
+- The `client_id` parameter can be used alone or combined with date filters.
+- The `from` parameter is required when using `to`.
 - If `to` is not provided, it has the same value as `from`.
-- If both dates are provided, the API includes appointments from the `from` date through the `to` date.
+- When multiple filters are provided, all conditions must be met.
 - The `to` date cannot be earlier than the `from` date.
 - Both dates are inclusive and use the salon's time zone (`America/Mexico_City`).
 
-Examples:
+**Examples:**
+
+**Appointments for a specific client:**
+
+`GET /appointments?client_id=12`
 
 **Appointments for November 2, 2026:**
 
@@ -233,6 +253,10 @@ Examples:
 **Appointments from November 1 to November 2, 2026:**
 
 `GET /appointments?from=2026-11-01&to=2026-11-02`
+
+**Appointments for a specific client within a date range:**
+
+`GET /appointments?client_id=12&from=2026-11-01&to=2026-11-02`
 
 Internally, the server uses a half-open date interval for PostgreSQL:
 
