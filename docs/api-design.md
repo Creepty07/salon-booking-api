@@ -1,15 +1,17 @@
-# OVERVIEW AND CONVENTIONS
+# API Design
 
-This API is designed for use by receptionists at our clients' salons. Authentication and login are not required in this version.
+## 1. OVERVIEW AND CONVENTIONS
+
+This API is designed for use by receptionists at the salon. Authentication and login are not required in this version.
 
 The API follows these conventions:
 
 - **JSON:** All JSON fields use `snake_case`.
 - **Dates:** All dates and timestamps use ISO 8601 format.
 - **Phone numbers:** Phone numbers use the E.164 international format.
-- **Time zone:** All dates and times use the salon's local time zone (UTC-06).
+- **Time zone:** All dates and times use the salon's local time zone (`America/Mexico_City`, UTC-06).
 
-# ENDPOINTS
+## 2. ENDPOINTS
 
 | ID | Method | Route | Description |
 |---|---|---|---|
@@ -21,9 +23,7 @@ The API follows these conventions:
 | R6 | GET | `/appointments?from=YYYY-MM-DD[&to=YYYY-MM-DD]` | Get appointments within a date range. |
 | R7–R8 | PATCH | `/appointments/:id` | Update an existing appointment. |
 
-# ENDPOINT DETAILS
-
-# ENDPOINT DETAILS
+## 3. ENDPOINT DETAILS
 
 ### R1. GET /services
 
@@ -54,13 +54,9 @@ The API follows these conventions:
 
 **Request body:**
 
-```json
-{
-  "name": "Luisa",
-  "phone": "+524422582568",
-  "email": "luisa@gmail.com"
-}
-```
+- `name`: Required.
+- `phone`: Required. Must use E.164 format.
+- `email`: Optional.
 
 **Success response:** `201 Created`
 
@@ -87,14 +83,10 @@ The API follows these conventions:
 
 **Request body:**
 
-```json
-{
-  "client_id": 1,
-  "stylist_id": 1,
-  "service_id": 1,
-  "starts_at": "2026-11-02T14:00:00-06:00"
-}
-```
+- `client_id`: Required.
+- `stylist_id`: Required.
+- `service_id`: Required.
+- `starts_at`: Required.
 
 **Success response:** `201 Created`
 
@@ -145,19 +137,17 @@ The API follows these conventions:
 
 ### R8. PATCH /appointments/:id (Edit appointment)
 
-**Request body:** Only the fields that need to be updated, such as:
+**Request body:** Only the following fields can be updated:
 
-```json
-{
-  "service_id": 2
-}
-```
+- `stylist_id`
+- `service_id`
+- `starts_at`
 
 **Success response:** `200 OK`
 
 **Response body:** The complete updated appointment object. If the service changes, the server recalculates `ends_at` and updates `price` using the new service information.
 
-# BUSINESS RULES
+## 4. BUSINESS RULES
 
 ### 4.1 Appointment status transitions
 
@@ -181,10 +171,11 @@ An appointment can only be edited when its current status is `scheduled`.
 
 The following fields can be updated:
 
-- `client_id`
 - `stylist_id`
 - `service_id`
 - `starts_at`
+
+The `client_id` cannot be changed. If an appointment is assigned to the wrong client, the receptionist must cancel the existing appointment and create a new one.
 
 The `price` cannot be edited manually.
 
@@ -192,7 +183,7 @@ If the appointment status is `completed` or `cancelled`, no appointment fields c
 
 ### 4.3 Price rules
 
-The client does not send the appointment price.
+The receptionist does not send the appointment price.
 
 The server gets the current price from `services.current_price` and saves it in `appointments.price` when creating an appointment.
 
@@ -202,7 +193,7 @@ The original price is stored in the appointment, so future service price changes
 
 ### 4.4 Appointment end time
 
-The client only sends `starts_at`.
+The receptionist only sends `starts_at`.
 
 The server calculates `ends_at` using:
 
@@ -210,23 +201,28 @@ The server calculates `ends_at` using:
 
 The duration comes from `services.duration_minutes`.
 
-The client cannot send or modify `ends_at` manually.
+The receptionist cannot send or modify `ends_at` manually.
 
 If the service changes, the server recalculates `ends_at` using the new service duration.
 
 ### 4.5 Appointment date filters
 
-The `from` and `to` parameters are used to filter appointments by date.
+The `client_id`, `from`, and `to` parameters are used to filter appointments.
 
-Both dates are inclusive and use the salon's time zone (UTC-06).
+The API supports two independent filters:
+
+- `client_id` is used to get all appointments for a specific client.
+- `from` is used to filter appointments by date.
+- `to` is optional and can only be used with `from`.
 
 Rules:
 
-- `from` is required.
-- `to` is optional.
+- R5 requires `client_id`.
+- R6 requires `from`.
 - If `to` is not provided, it has the same value as `from`.
-- If both are provided, the API includes appointments from the `from` date through the `to` date.
+- If both dates are provided, the API includes appointments from the `from` date through the `to` date.
 - The `to` date cannot be earlier than the `from` date.
+- Both dates are inclusive and use the salon's time zone (`America/Mexico_City`).
 
 Examples:
 
@@ -245,7 +241,7 @@ Internally, the server uses a half-open date interval for PostgreSQL:
 
 This includes the entire final day without depending on a specific time value.
 
-# OUT OF SCOPE
+## 5. OUT OF SCOPE
 
 The following features are not included in this API version:
 
@@ -267,7 +263,7 @@ Full overlap validation will be considered in a future version.
 
 Detailed error responses are not defined in this version.
 
-Error codes, messages, and response formats will be documented in a separate section (3.4).
+Error codes, messages, and response formats will be documented in a separate section.
 
 ### 5.4 Authentication and login
 
