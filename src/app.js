@@ -1,15 +1,15 @@
-import e from "express";
+import express from "express";
 
 /* import clientsRoutes from './routes/clients.routes.js';
 import appointmentsRoutes from './routes/appointments.routes.js';
 import servicesRoutes from './routes/services.routes.js';
 import errorHandler from './middlewares/errorHandler.js'; */
 
-const app = e();
+const app = express();
 
 
 // Middlewares
-app.use(e.json())
+app.use(express.json())
 
 /*
 // Routes
