@@ -7,10 +7,11 @@ import errorHandler from './middlewares/errorHandler.js'; */
 
 const app = e();
 
-/*
+
 // Middlewares
 app.use(e.json())
 
+/*
 // Routes
 app.use('/clients', clientsRoutes);
 app.use('/appointments', appointmentsRoutes);
