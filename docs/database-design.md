@@ -49,13 +49,12 @@ INSERT, UPDATE, and DELETE operations on appointments.
 - **SERVICES N:M STYLISTS:** A stylist can perform many services, and each service can be performed by many stylists. The `stylist_services` table implements this relationship.
 - **APPOINTMENTS → STYLIST_SERVICES:** Each appointment must use a stylist-service combination that exists in `stylist_services`.
 
-
 ## DATABASE ROLE AND PERMISSIONS
 
 ### salon_api
 
 The `salon_api` role is a restricted database user intended for the API.
-It follows the principle of least privilege: it only receives the permissions required by the API endpoints.
+It follows the principle of least privilege by receiving only the permissions required by the API.
 
 | Table | SELECT | INSERT | UPDATE | DELETE | Justification |
 |---|:---:|:---:|:---:|:---:|---|
@@ -69,7 +68,6 @@ The role also receives:
 
 - `CONNECT` on the `salon_dev` database.
 - `USAGE` on the `public` schema.
-- `USAGE` on sequences in the `public` schema, allowing identity columns to generate IDs during INSERT operations.
 
 The role does not receive `DELETE` permissions on any table.
 Appointments are cancelled instead of deleted, preserving their history.
