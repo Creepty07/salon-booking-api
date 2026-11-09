@@ -49,6 +49,7 @@ INSERT, UPDATE, and DELETE operations on appointments.
 - **SERVICES N:M STYLISTS:** A stylist can perform many services, and each service can be performed by many stylists. The `stylist_services` table implements this relationship.
 - **APPOINTMENTS → STYLIST_SERVICES:** Each appointment must use a stylist-service combination that exists in `stylist_services`.
 
+
 ## DATABASE ROLE AND PERMISSIONS
 
 ### salon_api
@@ -72,6 +73,20 @@ The role also receives:
 The role does not receive `DELETE` permissions on any table.
 Appointments are cancelled instead of deleted, preserving their history.
 
+### Password management
+
+The SQL script uses a placeholder password (`set_password`).
+The actual password must never be committed to the repository.
+
+Set the real password using PostgreSQL's `\password` command:
+
+```sql
+\password salon_api
+```
+
+Store the actual password in the local `.env` file.
+The `.env` file must be excluded from Git using `.gitignore`.
+
 ### Script execution order
 
 Run the database scripts in the following order:
@@ -80,5 +95,10 @@ Run the database scripts in the following order:
 2. `db/seed.sql` — Inserts the initial data.
 3. `db/user_salon_api.sql` — Creates the `salon_api` role and grants its permissions.
 
-The schema and initial data must exist before configuring the API role's table permissions.
+If the script is executed again, PostgreSQL may report:
 
+`ERROR: role "salon_api" already exists`
+
+This is harmless if the role was successfully created during a previous execution. The role does not need to be recreated.
+
+The schema and initial data must exist before configuring the API role's table permissions.
