@@ -50,3 +50,37 @@ INSERT, UPDATE, and DELETE operations on appointments.
 - **APPOINTMENTS → STYLIST_SERVICES:** Each appointment must use a stylist-service combination that exists in `stylist_services`.
 
 
+## DATABASE ROLE AND PERMISSIONS
+
+### salon_api
+
+The `salon_api` role is a restricted database user intended for the API.
+It follows the principle of least privilege: it only receives the permissions required by the API endpoints.
+
+| Table | SELECT | INSERT | UPDATE | DELETE | Justification |
+|---|:---:|:---:|:---:|:---:|---|
+| `services` | X | | | | The API retrieves available services through `GET /services`. |
+| `clients` | X | X | | | The API retrieves clients and creates new ones. |
+| `appointments` | X | X | X | | The API retrieves, creates, and updates appointments. |
+| `stylists` | X | | | | The API retrieves stylists to assign them to appointments. |
+| `stylist_services` | | | | | The composite foreign key validates stylist-service combinations automatically. |
+
+The role also receives:
+
+- `CONNECT` on the `salon_dev` database.
+- `USAGE` on the `public` schema.
+- `USAGE` on sequences in the `public` schema, allowing identity columns to generate IDs during INSERT operations.
+
+The role does not receive `DELETE` permissions on any table.
+Appointments are cancelled instead of deleted, preserving their history.
+
+### Script execution order
+
+Run the database scripts in the following order:
+
+1. `db/schema.sql` — Creates the database tables, constraints, and indexes.
+2. `db/seed.sql` — Inserts the initial data.
+3. `db/user_salon_api.sql` — Creates the `salon_api` role and grants its permissions.
+
+The schema and initial data must exist before configuring the API role's table permissions.
+
