@@ -1,17 +1,19 @@
 import app from "./app.js";
 import { config } from "./config.js";
-import { query } from './database/database.js';
+import { checkConnection } from './database/database.js';
 
 const PORT = config.port;
 
-const q = "SELECT current_user, current_database();";
+try {
+    const { current_user, current_database } = await checkConnection();
 
-const result = await query(
-    q, []
-);
+    console.log(`Connected to ${current_database} as ${current_user}`);
 
-console.log(result.rows)
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
+} catch (error) {
+    console.error("Database connection failed: ", error.message);
+    process.exit(1);
+}
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});

@@ -8,10 +8,18 @@ const pool = new Pool({
     database: config.db.name,
     user: config.db.user,
     password: config.db.password,
-    max: 10
+    max: config.db.poolMax
 });
 
-export const query = (q, params) => {
+export const query = (q, params = []) => {
     return pool.query(q, params);
 };
+
+export const checkConnection = async () => {
+    const result = await query(
+        "SELECT current_user, current_database();"
+    );
+
+    return result.rows[0];
+}
 

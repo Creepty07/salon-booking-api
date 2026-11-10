@@ -19,7 +19,8 @@ export const config = {
         user: process.env.DB_USER,
         password: process.env.DB_PASSWORD,
         port: DB_PORT,
-        name: process.env.DB_NAME
+        name: process.env.DB_NAME,
+        poolMax: 10
     }
 }
 
