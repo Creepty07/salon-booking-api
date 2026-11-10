@@ -50,3 +50,55 @@ INSERT, UPDATE, and DELETE operations on appointments.
 - **APPOINTMENTS → STYLIST_SERVICES:** Each appointment must use a stylist-service combination that exists in `stylist_services`.
 
 
+## DATABASE ROLE AND PERMISSIONS
+
+### salon_api
+
+The `salon_api` role is a restricted database user intended for the API.
+It follows the principle of least privilege by receiving only the permissions required by the API.
+
+| Table | SELECT | INSERT | UPDATE | DELETE | Justification |
+|---|:---:|:---:|:---:|:---:|---|
+| `services` | X | | | | The API retrieves available services through `GET /services`. |
+| `clients` | X | X | | | The API retrieves clients and creates new ones. |
+| `appointments` | X | X | X | | The API retrieves, creates, and updates appointments. |
+| `stylists` | X | | | | The API retrieves stylists to assign them to appointments. |
+| `stylist_services` | | | | | The composite foreign key validates stylist-service combinations automatically. |
+
+The role also receives:
+
+- `CONNECT` on the `salon_dev` database.
+- `USAGE` on the `public` schema.
+
+The role does not receive `DELETE` permissions on any table.
+Appointments are cancelled instead of deleted, preserving their history.
+
+### Password management
+
+The SQL script uses a placeholder password (`set_password`).
+The actual password must never be committed to the repository.
+
+Set the real password using PostgreSQL's `\password` command:
+
+```sql
+\password salon_api
+```
+
+Store the actual password in the local `.env` file.
+The `.env` file must be excluded from Git using `.gitignore`.
+
+### Script execution order
+
+Run the database scripts in the following order:
+
+1. `db/schema.sql` — Creates the database tables, constraints, and indexes.
+2. `db/seed.sql` — Inserts the initial data.
+3. `db/user_salon_api.sql` — Creates the `salon_api` role and grants its permissions.
+
+If the script is executed again, PostgreSQL may report:
+
+`ERROR: role "salon_api" already exists`
+
+This is harmless if the role was successfully created during a previous execution. The role does not need to be recreated.
+
+The schema and initial data must exist before configuring the API role's table permissions.
