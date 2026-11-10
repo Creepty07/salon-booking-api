@@ -4,6 +4,7 @@ import express from "express";
 import appointmentsRoutes from './routes/appointments.routes.js';
 import servicesRoutes from './routes/services.routes.js';
 import errorHandler from './middlewares/errorHandler.js'; */
+import health from "./routes/health.routes.js";
 
 const app = express();
 
@@ -16,12 +17,7 @@ app.use(express.json())
 app.use('/clients', clientsRoutes);
 app.use('/appointments', appointmentsRoutes);
 app.use('/services', servicesRoutes); */
-
-app.get('/health', (req, res) => {
-    res.status(200).json({
-        status: "ok"
-    })
-})
+app.use('/health', health);
 
 // Error Handler
 // app.use(errorHandler)

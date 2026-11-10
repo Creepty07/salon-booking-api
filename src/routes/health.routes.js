@@ -15,10 +15,13 @@ health.get('/db', async (req, res) => {
             db_connection: "up" 
         })
     } catch (error) {
+        console.error(error.message)
         return res.status(503).json({
             status_code: 503,
-            db_connection: "not established"
+            db_connection: "down"
         })
     }
 });
+
+export default health;
 
