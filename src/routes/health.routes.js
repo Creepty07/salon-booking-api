@@ -4,7 +4,9 @@ import { checkConnection } from '../database/database.js';
 const health = express.Router();
 
 health.get('/', (req, res) => {
-    return res.send('placeholder')
+    return res.status(200).json({
+        status: "ok"
+    })
 })
 
 health.get('/db', async (req, res) => {
